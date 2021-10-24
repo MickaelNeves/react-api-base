@@ -1,48 +1,31 @@
-import { useState, useEffect } from "react";
-import { useRef } from "react"
-import { useLocation, useNavigate } from "react-router-dom"
+import { useState, useRef } from "react";
+import { withRouter } from "react-router-dom";
 
-
-function useQuery() {
-  // Use the URLSearchParams API to extract the query parameters
-  // useLocation().search will have the query parameters eg: ?foo=bar&a=b
-  return new URLSearchParams(useLocation().search)
-}
-
-
-const Search = ({ getQuery,}: { getQuery: any }) => {
+const Search = (props) => {
+  const { history, handleSearchQuery } = props;
   const [text, setText] = useState("");
-  
-  const query = useQuery()
-
-  const term = query.get("term")
-
-  const inputRef = useRef(null)
-  const navigate = useNavigate()
-
+  const inputRef = useRef(null);
 
   const handleChange = (e: any) => {
     setText(e.target.value);
   };
- 
+
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    getQuery(text);
-    const searchValue = text
-    navigate(`?term=${searchValue}`)
+
+    history.push("/");
+
+    handleSearchQuery(text);
   };
+
   const handleKeypress = (e: any) => {
     if (e.keyCode === 13) {
       handleSubmit(e);
     }
-  }; 
-
-  
+  };
 
   return (
-  
-    <section className="center search"> 
-  
+    <section className="center search">
       <form>
         <input
           type="text"
@@ -55,13 +38,12 @@ const Search = ({ getQuery,}: { getQuery: any }) => {
           ref={inputRef}
           autoFocus
         />
-        <button onClick={handleSubmit } type="submit">
+        <button onClick={handleSubmit} type="submit">
           Go!
         </button>
       </form>
     </section>
-  
   );
 };
 
-export default Search;
+export default withRouter(Search);
